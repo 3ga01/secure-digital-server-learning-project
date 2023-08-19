@@ -1,13 +1,18 @@
+import React from 'react';
+import server from './server'; // Import your server instance here
 
 function Wallet({ address, setAddress, balance, setBalance }) {
   async function onChange(evt) {
-    const address = evt.target.value;
-    setAddress(address);
-    if (address) {
-      const {
-        data: { balance },
-      } = await server.get(`balance/${address}`);
-      setBalance(balance);
+    const newAddress = evt.target.value;
+    setAddress(newAddress);
+    if (newAddress) {
+      try {
+        const response = await server.get(`balance/${newAddress}`);
+        const { balance: newBalance } = response.data;
+        setBalance(newBalance);
+      } catch (error) {
+        console.error('Error fetching balance:', error);
+      }
     } else {
       setBalance(0);
     }
